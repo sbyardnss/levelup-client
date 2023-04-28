@@ -122,7 +122,7 @@ export const EventForm = () => {
                             .then(() => navigate("/events"))
                     }
                 }}
-                className="btn btn-primary">Create</button>
+                className="btn btn-primary">{eventId ? "update" : "create" }</button>
         </form>
     )
 }

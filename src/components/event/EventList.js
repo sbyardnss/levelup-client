@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react"
-import { getEvents } from "../../managers/EventManager"
+import { deleteEvent, getEvents } from "../../managers/EventManager"
 import { useNavigate } from "react-router-dom"
 
 export const EventList = (props) => {
-    const [ events, setEvents ] = useState([])
+    const [events, setEvents] = useState([])
+    const [ render, setRender ] = useState(false)
+
     const navigate = useNavigate()
     useEffect(() => {
         getEvents().then(data => setEvents(data))
-    }, [])
+    }, [render])
 
     return (
         <article className="events">
@@ -19,6 +21,8 @@ export const EventList = (props) => {
                         <div className="event__attendees">Currently {event.attendees} attending</div>
                         <button
                             onClick={() => navigate(`/addEvent/${event.id}`)}>Update Event</button>
+                        <button
+                            onClick={() => deleteEvent(event.id).then(() => setRender(!render))}>Delete</button>
                     </section>
                 })
             }
