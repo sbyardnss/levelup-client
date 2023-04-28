@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom'
-import { createGame } from '../../managers/GameManager.js'
+import { useNavigate, useParams } from 'react-router-dom'
+import { createGame, getSingleGame, updateGame } from '../../managers/GameManager.js'
 import { getGameTypes } from "../../managers/GameTypeManager.js"
 
 export const GameForm = () => {
     const navigate = useNavigate()
     const [gameTypes, setGameTypes] = useState([])
+    const { gameId } = useParams()
 
     /*
         Since the input fields are bound to the values of
@@ -17,29 +18,37 @@ export const GameForm = () => {
         number_of_players: 0,
         title: "",
         maker: "",
-        game_type: 0
+        type: 0
     })
 
     useEffect(() => {
 
         getGameTypes()
-            .then(data => setGameTypes(data))
+            .then(data => setGameTypes(data)
+            )
 
         // TODO: Get the game types, then set the state
     }, [])
 
-    const changeGameState = (domEvent) => {
-        if (domEvent.target.name === "numberOfPlayers" || domEvent.target.name === "gameTypeId" || domEvent.target.name === "skillLevel") {
-            const gameCopy = { ...currentGame }
-            gameCopy[domEvent.target.name] = parseInt(domEvent.target.value)
-            setCurrentGame(gameCopy)
+    useEffect(() => {
+        if (gameId) {
+            getSingleGame(gameId)
+                .then((data) => setCurrentGame(data))
         }
-        else {
-            const gameCopy = { ...currentGame }
-            gameCopy[domEvent.target.name] = domEvent.target.value
-            setCurrentGame(gameCopy)
+    }, [gameId])
 
-        }
+    const changeGameState = (domEvent) => {
+        // if (domEvent.target.name === "numberOfPlayers" || domEvent.target.name === "gameTypeId" || domEvent.target.name === "skillLevel") {
+        //     const gameCopy = { ...currentGame }
+        //     gameCopy[domEvent.target.name] = parseInt(domEvent.target.value)
+        //     setCurrentGame(gameCopy)
+        // }
+        // else {
+        const gameCopy = { ...currentGame }
+        gameCopy[domEvent.target.name] = domEvent.target.value
+        setCurrentGame(gameCopy)
+
+        // }
         // TODO: Complete the onChange function
     }
 
@@ -68,9 +77,10 @@ export const GameForm = () => {
                 <div className="form-group">
                     <label htmlFor="num_of_players">Number of players:</label>
                     <input type="number"
-                        name="numberOfPlayers"
+                        name="number_of_players"
                         required autoFocus
                         className="form-control"
+                        value={currentGame.number_of_players}
                         onChange={changeGameState}></input>
                 </div>
             </fieldset>
@@ -78,18 +88,18 @@ export const GameForm = () => {
                 <div className="form-group">
                     <label htmlFor="skillLevel">Skill level:</label>
                     <input type="number"
-                        name="skillLevel"
+                        name="skill_level"
                         required autoFocus
                         className="form-control"
-                        value={currentGame.skillLevel}
+                        value={currentGame.skill_level}
                         onChange={changeGameState}></input>
                 </div>
             </fieldset>
             <fieldset>
                 <div className="form-group">
-                    <select name="gameTypeId"
+                    <select name="type"
                         className="form-control"
-                        value={currentGame.gameTypeId}
+                        value={currentGame.type}
                         onChange={changeGameState}>
                         <option value={0}>select game type</option>
                         {
@@ -113,16 +123,23 @@ export const GameForm = () => {
                     const game = {
                         maker: currentGame.maker,
                         title: currentGame.title,
-                        number_of_players: parseInt(currentGame.numberOfPlayers),
-                        skill_level: parseInt(currentGame.skillLevel),
-                        game_type: parseInt(currentGame.gameTypeId)
+                        number_of_players: parseInt(currentGame.number_of_players),
+                        skill_level: parseInt(currentGame.skill_level),
+                        game_type: parseInt(currentGame.type)
                     }
 
                     // Send POST request to your API
-                    createGame(game)
-                        .then(() => navigate("/games"))
+                    if (gameId) {
+                        updateGame(game, gameId)
+                            .then(() => navigate("/"))
+                    }
+                    else {
+                        createGame(game)
+                            .then(() => navigate("/"))
+
+                    }
                 }}
-                className="btn btn-primary">Create</button>
+                className="btn btn-primary">{gameId ? "update" : "create"}</button>
         </form>
     )
 }

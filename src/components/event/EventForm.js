@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from 'react-router-dom'
-import { getEvents, createEvent } from "../../managers/EventManager"
+import { useNavigate, useParams } from 'react-router-dom'
+import { getEvents, createEvent, getSingleEvent, updateEvent } from "../../managers/EventManager"
 import { getGames } from "../../managers/GameManager"
 
 export const EventForm = () => {
     const navigate = useNavigate()
     const [games, setGames] = useState([])
-
+    const { eventId } = useParams()
     /*
         Since the input fields are bound to the values of
         the properties of this state variable, you need to
@@ -26,7 +26,13 @@ export const EventForm = () => {
 
         // TODO: Get the game types, then set the state
     }, [])
-
+    useEffect(() => {
+        if (eventId) {
+            getSingleEvent(eventId)
+            .then((data) => setCurrentEvent(data))
+        }
+    }, [eventId])
+    console.log(currentEvent)
     const changeEventState = (domEvent) => {
         // if (domEvent.target.name === "numberOfPlayers" || domEvent.target.name === "gameTypeId" || domEvent.target.name === "skillLevel") {
         //     const eventCopy = { ...currentEvent }
@@ -69,6 +75,7 @@ export const EventForm = () => {
                     <input type="time"
                         name="time"
                         required autoFocus
+                        value={currentEvent.time}
                         className="form-control"
                         onChange={changeEventState}></input>
                 </div>
@@ -102,13 +109,18 @@ export const EventForm = () => {
                         description: currentEvent.description,
                         date: currentEvent.date,
                         time: currentEvent.time,
-                        organizer: localStorage.getItem("lu_token"),
                         game: parseInt(currentEvent.game)
                     }
 
                     // Send POST request to your API
-                    createEvent(event)
+                    if (eventId) {
+                        updateEvent(event, eventId)
                         .then(() => navigate("/events"))
+                    }
+                    else {
+                        createEvent(event)
+                            .then(() => navigate("/events"))
+                    }
                 }}
                 className="btn btn-primary">Create</button>
         </form>

@@ -5,6 +5,9 @@ export const NavBar = () => {
     const navigate = useNavigate()
     return (
         <ul className="navbar">
+            <Link className="navbar__item" to="/">
+                Home
+            </Link>
             <Link className="navbar__item" to="/events">
                 Events
             </Link>

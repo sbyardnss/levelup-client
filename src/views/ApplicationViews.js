@@ -13,10 +13,12 @@ export const ApplicationViews = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route element={<Authorized />}>
-                <Route path="/games" element={<GameList />} />
+                <Route path="/" element={<GameList />} />
                 <Route path="/addGame" element={<GameForm />} />
+                <Route path="/addGame/:gameId" element={<GameForm />} />
                 <Route path="/events" element={<EventList />} />
                 <Route path="/addEvent" element={<EventForm />} />
+                <Route path="/addEvent/:eventId" element={<EventForm />} />
             </Route>
         </Routes>
     </>
