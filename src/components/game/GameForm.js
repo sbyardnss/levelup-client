@@ -13,25 +13,33 @@ export const GameForm = () => {
         provide some default values.
     */
     const [currentGame, setCurrentGame] = useState({
-        skillLevel: 1,
-        numberOfPlayers: 0,
+        skill_level: 1,
+        number_of_players: 0,
         title: "",
         maker: "",
-        gameTypeId: 0
+        game_type: 0
     })
 
     useEffect(() => {
-        
-            getGameTypes()
+
+        getGameTypes()
             .then(data => setGameTypes(data))
-        
+
         // TODO: Get the game types, then set the state
     }, [])
 
     const changeGameState = (domEvent) => {
-        const gameCopy = {...currentGame}
-        gameCopy[domEvent.target.name] = domEvent.target.value
-        setCurrentGame(gameCopy)
+        if (domEvent.target.name === "numberOfPlayers" || domEvent.target.name === "gameTypeId" || domEvent.target.name === "skillLevel") {
+            const gameCopy = { ...currentGame }
+            gameCopy[domEvent.target.name] = parseInt(domEvent.target.value)
+            setCurrentGame(gameCopy)
+        }
+        else {
+            const gameCopy = { ...currentGame }
+            gameCopy[domEvent.target.name] = domEvent.target.value
+            setCurrentGame(gameCopy)
+
+        }
         // TODO: Complete the onChange function
     }
 
@@ -45,6 +53,53 @@ export const GameForm = () => {
                         value={currentGame.title}
                         onChange={changeGameState}
                     />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="maker">Maker: </label>
+                    <input type="text" name="maker" required autoFocus className="form-control"
+                        value={currentGame.maker}
+                        onChange={changeGameState}
+                    />
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="num_of_players">Number of players:</label>
+                    <input type="number"
+                        name="numberOfPlayers"
+                        required autoFocus
+                        className="form-control"
+                        onChange={changeGameState}></input>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <label htmlFor="skillLevel">Skill level:</label>
+                    <input type="number"
+                        name="skillLevel"
+                        required autoFocus
+                        className="form-control"
+                        value={currentGame.skillLevel}
+                        onChange={changeGameState}></input>
+                </div>
+            </fieldset>
+            <fieldset>
+                <div className="form-group">
+                    <select name="gameTypeId"
+                        className="form-control"
+                        value={currentGame.gameTypeId}
+                        onChange={changeGameState}>
+                        <option value={0}>select game type</option>
+                        {
+                            gameTypes.map(gt => {
+                                return <>
+                                    <option key={gt.label} value={gt.id}>{gt.label}</option>
+                                </>
+                            })
+                        }
+                    </select>
                 </div>
             </fieldset>
 
