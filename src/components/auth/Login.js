@@ -20,7 +20,7 @@ export const Login = () => {
             .then(res => {
                 if ("valid" in res && res.valid && "token" in res) {
                     localStorage.setItem("lu_token", res.token)
-                    navigate("/games")
+                    navigate("/")
                 }
                 else {
                     invalidDialog.current.showModal()
