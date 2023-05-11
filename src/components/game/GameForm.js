@@ -99,7 +99,7 @@ export const GameForm = () => {
                 <div className="form-group">
                     <select name="type"
                         className="form-control"
-                        value={currentGame.type}
+                        value={currentGame.type.id}
                         onChange={changeGameState}>
                         <option value={0}>select game type</option>
                         {
@@ -125,7 +125,7 @@ export const GameForm = () => {
                         title: currentGame.title,
                         number_of_players: parseInt(currentGame.number_of_players),
                         skill_level: parseInt(currentGame.skill_level),
-                        game_type: parseInt(currentGame.type)
+                        type: parseInt(currentGame.type.id)
                     }
 
                     // Send POST request to your API
